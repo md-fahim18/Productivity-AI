@@ -1,13 +1,19 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Send, CheckCircle2 } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Send, CheckCircle2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -15,14 +21,14 @@ export default function ContactForm() {
     email: "",
     subject: "",
     message: "",
-  })
-  const [status, setStatus] = useState({ type: "", message: "" })
-  const [loading, setLoading] = useState(false)
+  });
+  const [status, setStatus] = useState({ type: "", message: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setStatus({ type: "", message: "" })
+    e.preventDefault();
+    setLoading(true);
+    setStatus({ type: "", message: "" });
 
     try {
       const response = await fetch("/api/send-email", {
@@ -36,38 +42,40 @@ export default function ContactForm() {
           subject: formData.subject,
           message: formData.message,
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
         setStatus({
           type: "success",
           message: "Message sent successfully! I'll get back to you soon.",
-        })
-        setFormData({ name: "", email: "", subject: "", message: "" })
+        });
+        setFormData({ name: "", email: "", subject: "", message: "" });
       } else {
-        throw new Error(data.error || "Failed to send message")
+        throw new Error(data.error || "Failed to send message");
       }
     } catch (error) {
       setStatus({
         type: "error",
         message: "Failed to send message. Please try again later.",
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle>Get in Touch</CardTitle>
-        <CardDescription>Send me a message and I'll respond as soon as possible</CardDescription>
+        <CardDescription>
+          Send me a message and I'll respond as soon as possible
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -145,21 +153,15 @@ export default function ContactForm() {
                     : "bg-red-500/10 text-red-500 border border-red-500/20"
                 }`}
               >
-                {status.type === "success" && <CheckCircle2 className="h-5 w-5" />}
+                {status.type === "success" && (
+                  <CheckCircle2 className="h-5 w-5" />
+                )}
                 <p>{status.message}</p>
               </motion.div>
             )}
           </AnimatePresence>
         </form>
-
-        <div className="mt-6 p-4 bg-muted rounded-lg">
-          <p className="text-sm text-muted-foreground">
-            <strong>Note:</strong> Email functionality uses Resend. Make sure to add your{" "}
-            <code className="bg-background px-2 py-1 rounded">RESEND_API_KEY</code> environment variable in the Vars
-            section.
-          </p>
-        </div>
       </CardContent>
     </Card>
-  )
+  );
 }
